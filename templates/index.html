@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pow</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    {{if eq .status ""}}
+    <div class="container">
+        <img src="/static/images/logo.png" width="300px">
+        <p class="rayid">Ray ID: {{.prefix}}-{{.difficulty}}</p>
+        <table>
+            <tr class="calculating">
+                <td class="w-full">Calculating Nonce</td>
+                <td class="w30 blink">...</td>
+            </tr>
+            <tr class="submitting">
+                <td class="w-full">Submitting Result</td>
+                <td class="blink">...</td>
+            </tr>
+            <tr class="success">
+                <td class="w-full">Redirecting</td>
+                <td class="blink">...</td>
+            </tr>
+            <tr class="failed">
+                <td class="w-full">Failed, Retrying</td>
+                <td class="blink">...</td>
+            </tr>
+        </table>
+    </div>
+    {{end}}
+
+    {{if eq .status "waf"}}
+    <!-- waf -->
+    <div class="container">
+        <h1>PoW Shield</h1>
+        <p>Your request has triggered WAF rules and has been blocked</p>
+    </div>
+    {{end}}
+    {{if eq .status "banned"}}
+    <!-- banned -->
+    <div class="container">
+        <h1>PoW Shield</h1>
+        <p>Your IP has triggered internal rules and will be banned for a period of time</p>
+    </div>
+    {{end}}
+
+
+
+    {{if eq .status ""}}
+    <script src="/static/javascripts/main.js"></script>
+    <script>
+        window.onload = async function () {
+            const prefix = '{{.prefix}}';
+            const difficulty = {{.difficulty}};
+            const redirect = '{{.redirect}}';
+            const nonce = await pow(prefix, difficulty);
+
+            document.querySelector('.calculating td.blink').innerHTML = 'V'
+            document.querySelector('.calculating td.blink').classList.remove('blink')
+            document.querySelector('.submitting').style.display = 'table-row'
+
+            const response = await fetch('/pow', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    prefix: '{{.prefix}}',
+                    nonce: nonce
+                })
+            });
+            if (response.status === 204) {
+                document.querySelector('.submitting td.blink').innerHTML = 'V'
+                document.querySelector('.submitting td.blink').classList.remove('blink')
+                document.querySelector('.success').style.display = 'table-row'
+
+                // redirect after 2 seconds
+                setTimeout(() => {
+                    window.location.href = redirect;
+                }, 2000);
+            } else {
+                console.log(response.status);
+                document.querySelector('.submitting td.blink').innerHTML = 'X'
+                document.querySelector('.submitting td.blink').classList.remove('blink')
+                document.querySelector('.failed').style.display = 'table-row'
+            }
+        }
+    </script>
+    {{end}}
+</body>
+
+</html>

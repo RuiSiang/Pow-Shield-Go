@@ -1,6 +1,6 @@
 # WIP: PoW Shield Go
 
-Implementation of PoW Shield in Go for stress-testing purposes
+Implementation of [PoW Shield](https://github.com/RuiSiang/PoW-Shield) in Go for stress-testing purposes and future production version.
 
 ## Usage
 

@@ -1,4 +1,4 @@
-# PoW Shield Go
+# WIP: PoW Shield Go
 
 Implementation of PoW Shield in Go for stress-testing purposes
 

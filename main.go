@@ -72,7 +72,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-var powTmpl = template.Must(template.ParseFiles("templates/index.html"))
+var powTmpl = template.Must(template.ParseFiles("templates/index.gohtml"))
 
 func powHandler(w http.ResponseWriter, r *http.Request) {
 	difficulty, _ := strconv.Atoi(os.Getenv("DIFFICULTY"))
